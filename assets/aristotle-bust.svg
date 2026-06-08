@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 760" role="img" aria-label="Aristotle bust in an ancient Greek temple frame">
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#f8f0df"/>
+      <stop offset="55%" stop-color="#efe2c5"/>
+      <stop offset="100%" stop-color="#d8bf8e"/>
+    </linearGradient>
+    <linearGradient id="marble" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#fffdf7"/>
+      <stop offset="35%" stop-color="#ede1ca"/>
+      <stop offset="100%" stop-color="#c3ae84"/>
+    </linearGradient>
+    <radialGradient id="halo" cx="50%" cy="25%" r="55%">
+      <stop offset="0%" stop-color="#fff6cf" stop-opacity="1"/>
+      <stop offset="45%" stop-color="#f3d99b" stop-opacity="0.65"/>
+      <stop offset="100%" stop-color="#e2c273" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="22" stdDeviation="18" flood-color="#0f1222" flood-opacity="0.28"/>
+    </filter>
+    <pattern id="meander" width="32" height="32" patternUnits="userSpaceOnUse">
+      <path d="M0 8h24v16H8V8" fill="none" stroke="#b48b3f" stroke-width="4"/>
+      <path d="M24 0v8H8v16H0" fill="none" stroke="#b48b3f" stroke-width="4"/>
+    </pattern>
+  </defs>
+
+  <rect width="640" height="760" rx="42" fill="#fbf7ef"/>
+  <rect x="18" y="18" width="604" height="724" rx="32" fill="url(#bg)" stroke="#c59d4d" stroke-width="4"/>
+  <rect x="32" y="32" width="576" height="36" fill="url(#meander)" opacity="0.9"/>
+  <rect x="32" y="692" width="576" height="36" fill="url(#meander)" opacity="0.9"/>
+  <circle cx="320" cy="300" r="190" fill="url(#halo)"/>
+
+  <!-- columns -->
+  <g opacity="0.95">
+    <g transform="translate(72,120)">
+      <rect x="0" y="30" width="68" height="440" rx="8" fill="#f4ead7" stroke="#ceb488"/>
+      <rect x="-10" y="0" width="88" height="40" rx="8" fill="#dcc49a"/>
+      <rect x="-14" y="460" width="96" height="18" rx="5" fill="#ccb07b"/>
+      <g stroke="#d9c7a6" stroke-width="3">
+        <line x1="14" y1="36" x2="14" y2="462"/>
+        <line x1="28" y1="36" x2="28" y2="462"/>
+        <line x1="42" y1="36" x2="42" y2="462"/>
+        <line x1="56" y1="36" x2="56" y2="462"/>
+      </g>
+    </g>
+    <g transform="translate(500,120)">
+      <rect x="0" y="30" width="68" height="440" rx="8" fill="#f4ead7" stroke="#ceb488"/>
+      <rect x="-10" y="0" width="88" height="40" rx="8" fill="#dcc49a"/>
+      <rect x="-14" y="460" width="96" height="18" rx="5" fill="#ccb07b"/>
+      <g stroke="#d9c7a6" stroke-width="3">
+        <line x1="14" y1="36" x2="14" y2="462"/>
+        <line x1="28" y1="36" x2="28" y2="462"/>
+        <line x1="42" y1="36" x2="42" y2="462"/>
+        <line x1="56" y1="36" x2="56" y2="462"/>
+      </g>
+    </g>
+    <rect x="120" y="108" width="400" height="34" rx="8" fill="#d7bb85"/>
+    <rect x="112" y="92" width="416" height="22" rx="8" fill="#ead5a8"/>
+  </g>
+
+  <!-- olive branches -->
+  <g fill="#80955f" opacity="0.95">
+    <g transform="translate(164,186) rotate(-26)">
+      <path d="M0 120C20 50 62 12 132 0" stroke="#7a8558" stroke-width="5" fill="none"/>
+      <ellipse cx="16" cy="104" rx="13" ry="6" transform="rotate(-30 16 104)"/>
+      <ellipse cx="30" cy="88" rx="13" ry="6" transform="rotate(-20 30 88)"/>
+      <ellipse cx="46" cy="72" rx="13" ry="6" transform="rotate(-12 46 72)"/>
+      <ellipse cx="66" cy="55" rx="13" ry="6" transform="rotate(-2 66 55)"/>
+      <ellipse cx="88" cy="40" rx="13" ry="6" transform="rotate(8 88 40)"/>
+      <ellipse cx="112" cy="23" rx="13" ry="6" transform="rotate(16 112 23)"/>
+    </g>
+    <g transform="translate(476,186) scale(-1,1) rotate(-26)">
+      <path d="M0 120C20 50 62 12 132 0" stroke="#7a8558" stroke-width="5" fill="none"/>
+      <ellipse cx="16" cy="104" rx="13" ry="6" transform="rotate(-30 16 104)"/>
+      <ellipse cx="30" cy="88" rx="13" ry="6" transform="rotate(-20 30 88)"/>
+      <ellipse cx="46" cy="72" rx="13" ry="6" transform="rotate(-12 46 72)"/>
+      <ellipse cx="66" cy="55" rx="13" ry="6" transform="rotate(-2 66 55)"/>
+      <ellipse cx="88" cy="40" rx="13" ry="6" transform="rotate(8 88 40)"/>
+      <ellipse cx="112" cy="23" rx="13" ry="6" transform="rotate(16 112 23)"/>
+    </g>
+  </g>
+
+  <!-- bust -->
+  <g filter="url(#shadow)">
+    <path d="M186 668c18-76 72-118 136-118s118 42 136 118c-60 26-214 26-272 0Z" fill="url(#marble)"/>
+    <path d="M245 553c24 36 108 36 132 0l4 58c-38 28-104 28-140 0l4-58Z" fill="#dfcfb0"/>
+    <path d="M320 156c-72 0-124 58-124 142 0 44 11 90 30 126 26 49 58 78 94 78s68-29 94-78c19-36 30-82 30-126 0-84-52-142-124-142Z" fill="url(#marble)"/>
+    <path d="M195 294c-16-24-16-66 4-96 16-24 46-39 74-37 18-22 69-30 110-10 43 21 73 69 68 124-26-32-63-50-120-52-54-2-101 20-136 71Z" fill="#d5c09a"/>
+    <path d="M250 314c18-12 42-12 60 0M332 314c18-12 42-12 60 0" fill="none" stroke="#6d5838" stroke-width="10" stroke-linecap="round"/>
+    <path d="M320 310c-10 42-24 78-7 89 8 6 20 3 30-3" fill="none" stroke="#876f47" stroke-width="9" stroke-linecap="round"/>
+    <path d="M268 419c28 20 71 22 103 0" fill="none" stroke="#725d3e" stroke-width="10" stroke-linecap="round"/>
+    <path d="M224 390c14 72 42 131 96 131s82-59 96-131c-27 36-61 54-96 54s-69-18-96-54Z" fill="#e8dcc4" opacity="0.92"/>
+    <path d="M219 371c12 72 35 131 101 131s89-59 101-131c-29 34-63 51-101 51s-72-17-101-51Z" fill="none" stroke="#bea27c" stroke-width="8" stroke-linecap="round"/>
+    <circle cx="278" cy="342" r="8" fill="#58462f"/>
+    <circle cx="362" cy="342" r="8" fill="#58462f"/>
+    <rect x="174" y="670" width="292" height="32" rx="16" fill="#d8c19b"/>
+    <rect x="214" y="706" width="212" height="20" rx="10" fill="#baa072"/>
+  </g>
+
+  <text x="320" y="82" text-anchor="middle" font-family="Georgia,serif" font-size="26" letter-spacing="8" fill="#7f6330">ΑΡΙΣΤΟΤΕΛΗΣ</text>
+</svg>
