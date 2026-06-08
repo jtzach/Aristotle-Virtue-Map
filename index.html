@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>VirtueMap AI — Aristotelian Virtue Profile</title>
+  <meta name="description" content="Rank ethical dilemmas and discover your Aristotelian virtue profile compared with LLMs." />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="frieze frieze-top"></div>
+  <div class="frieze frieze-bottom"></div>
+  <div class="glow glow-a"></div>
+  <div class="glow glow-b"></div>
+
+  <main id="app">
+    <section id="homeScreen" class="screen active">
+      <nav class="topbar">
+        <div class="brand"><span class="brand-mark">VM</span><span>VirtueMap AI</span></div>
+        <div class="top-links"><a href="#llmHomeGrid">LLM gallery</a><a href="#virtues">Virtues</a><a href="#methodBox">Method</a></div>
+      </nav>
+
+      <header class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Aristotle · ethical dilemmas · LLM comparison</p>
+          <h1>Discover your <span>VirtueMap</span>.</h1>
+          <p class="lead">This is a public demonstration of <b>VirtueMap AI</b>: an <b>ethical dilemma ranking questionnaire</b> grounded in Aristotle's virtue ethics. Rank responses to seven dilemmas, receive a five-virtue pentagon profile, and compare your profile with nine popular LLMs.</p>
+          <div class="hero-actions">
+            <button class="btn primary" id="startBtn">Start the QnA</button>
+            <button class="btn secondary" id="previewResultsBtn">Preview results</button>
+          </div>
+          <p class="note">To our knowledge, this is the first Aristotelian virtue profiling framework that operationalizes virtue ethics through a ranked ethical-dilemma questionnaire and applies the same framework to LLMs.</p>
+        </div>
+        <div class="hero-art temple-card">
+          <img src="assets/aristotle_reference.png" alt="Reference image of Aristotle bust" class="portrait-img" />
+          <div class="quote-box">
+            <span>“</span>
+            <p>We become just by doing just acts, temperate by doing temperate acts, brave by doing brave acts.</p>
+            <small>Inspired by Aristotle's <em>Nicomachean Ethics</em></small>
+          </div>
+        </div>
+      </header>
+
+      <section class="panel art-panel">
+        <div class="art-copy">
+          <p class="eyebrow">Classical foundation</p>
+          <h2>From the <em>Nicomachean Ethics</em> to VirtueMap</h2>
+          <p>VirtueMap AI is inspired by Aristotle's <em>Nicomachean Ethics</em>, a foundational text for virtue ethics. We translate its character-centered perspective into a modern ranking questionnaire: instead of judging one answer as morally correct, the system estimates how strongly your preferences align with five virtues.</p>
+          <a class="source-link" href="https://en.wikipedia.org/wiki/Nicomachean_Ethics" target="_blank" rel="noopener">Read background on <em>Nicomachean Ethics</em> ↗</a>
+        </div>
+        <div class="classical-grid">
+          <figure class="classical-card temple-card large">
+            <img src="assets/school_of_athens.png" alt="School of Athens painting" />
+            <figcaption>The School of Athens: Aristotle in the classical philosophical tradition.</figcaption>
+          </figure>
+          <figure class="classical-card temple-card">
+            <img src="assets/nicomachean_title_page.png" alt="Title page of a historical Nicomachean Ethics edition" />
+            <figcaption>A historical title page of Aristotle's <em>Nicomachean Ethics</em>.</figcaption>
+          </figure>
+          <figure class="classical-card temple-card">
+            <img src="assets/plato_aristotle_wikipedia_excerpt.png" alt="Wikipedia excerpt showing Plato and Aristotle" />
+            <figcaption>Wikipedia excerpt showing Plato and Aristotle in Raphael's fresco.</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section id="virtues" class="panel two-col">
+        <div>
+          <p class="eyebrow">The pentagon</p>
+          <h2>The five virtues we profile</h2>
+          <p>The profile is a pentagon. Each corner represents one Aristotelian virtue: <b>Practical Wisdom</b>, <b>Justice</b>, <b>Truthfulness</b>, <b>Courage</b>, and <b>Temperance</b>. Higher values mean that your preferred responses align more strongly with the response patterns associated with that virtue.</p>
+        </div>
+        <div class="virtue-pentagon-wrap">
+          <canvas id="virtuePentagon" width="520" height="520" aria-label="Pentagon explanation of Aristotle virtues"></canvas>
+        </div>
+      </section>
+      <section class="virtue-definitions" id="virtueDefinitions"></section>
+
+      <section id="methodBox" class="panel instructions method-panel">
+        <div class="instruction-card"><b>1</b><h3>Read a dilemma</h3><p>Each dilemma is general, non-lethal, non-religious, and non-political. There is no single correct answer.</p></div>
+        <div class="instruction-card"><b>2</b><h3>Rank five responses</h3><p>Drag the responses from most preferable to least preferable. You can skip any dilemma and return later.</p></div>
+        <div class="instruction-card"><b>3</b><h3>Compute virtue alignment</h3><p>Your ranking is compared with a virtue-expression key using normalized Borda alignment to produce percentages on each virtue axis.</p></div>
+      </section>
+
+      <section id="llmHomeGrid" class="llm-section">
+        <div class="section-title center">
+          <p class="eyebrow">Measured model gallery</p>
+          <h2>Nine LLM VirtueMaps</h2>
+          <p>These 3×3 model profiles use your latest measured OpenRouter outputs. You can update them later by replacing the LLM profile block in <code>data.js</code>.</p>
+        </div>
+        <div class="llm-grid" id="homeLlmGrid"></div>
+      </section>
+    </section>
+
+    <section id="surveyScreen" class="screen">
+      <nav class="topbar compact">
+        <div class="brand"><span class="brand-mark">VM</span><span>VirtueMap AI</span></div>
+        <button class="ghost-btn" id="backHomeBtn">Home</button>
+      </nav>
+      <div class="survey-shell">
+        <div class="progress-row">
+          <span id="progressText">Dilemma 1/7</span>
+          <span id="answeredText">0 answered · 0 skipped</span>
+        </div>
+        <div class="progress-track"><div id="progressFill" class="progress-fill"></div></div>
+        <article class="dilemma-card temple-card" id="dilemmaCard"></article>
+        <div class="survey-actions">
+          <button class="btn secondary" id="prevBtn">Back</button>
+          <button class="btn skip" id="skipBtn">Skip</button>
+          <button class="btn primary" id="submitRankingBtn">Submit this ranking</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="resultsScreen" class="screen">
+      <nav class="topbar compact">
+        <div class="brand"><span class="brand-mark">VM</span><span>VirtueMap AI</span></div>
+        <button class="ghost-btn" id="restartBtn">Restart</button>
+      </nav>
+      <section class="results-banner panel temple-card">
+        <figure class="results-banner-art">
+          <img src="assets/school_of_athens.png" alt="School of Athens painting" />
+        </figure>
+        <div class="results-banner-copy">
+          <p class="eyebrow">Your result</p>
+          <h2 id="resultTitle">Your VirtueMap</h2>
+          <p id="resultSummary">Your profile will appear here after at least one submitted ranking.</p>
+          <div id="closestModels" class="closest-models"></div>
+        </div>
+      </section>
+      <section class="results-hero panel temple-card">
+        <div class="result-chart-card wide-only">
+          <canvas id="userRadar" width="620" height="620"></canvas>
+        </div>
+      </section>
+      <section class="llm-section results-llm">
+        <div class="section-title center">
+          <p class="eyebrow">Compared with LLMs</p>
+          <h2>Your map above the model gallery</h2>
+          <p>Similarity means similarity of virtue-profile shape on this questionnaire, not identical beliefs or values.</p>
+        </div>
+        <div class="llm-grid" id="resultsLlmGrid"></div>
+      </section>
+    </section>
+  </main>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
