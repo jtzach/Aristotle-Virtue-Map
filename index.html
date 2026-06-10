@@ -57,10 +57,6 @@
             <img src="assets/nicomachean_title_page.png" alt="Title page of a historical Nicomachean Ethics edition" />
             <figcaption>A historical title page of Aristotle's <em>Nicomachean Ethics</em>.</figcaption>
           </figure>
-          <figure class="classical-card temple-card">
-            <img src="assets/plato_aristotle_wikipedia_excerpt.png" alt="Wikipedia excerpt showing Plato and Aristotle" />
-            <figcaption>Wikipedia excerpt showing Plato and Aristotle in Raphael's fresco.</figcaption>
-          </figure>
         </div>
       </section>
 
@@ -72,6 +68,7 @@
         </div>
         <div class="virtue-pentagon-wrap">
           <canvas id="virtuePentagon" width="520" height="520" aria-label="Pentagon explanation of Aristotle virtues"></canvas>
+          <div class="chart-caption">Display range 40–100 · full scores remain 0–100</div>
         </div>
       </section>
       <section class="virtue-definitions" id="virtueDefinitions"></section>
@@ -131,6 +128,7 @@
       <section class="results-hero panel temple-card">
         <div class="result-chart-card wide-only">
           <canvas id="userRadar" width="620" height="620"></canvas>
+          <div class="chart-caption">Display range 40–100 · full scores remain 0–100</div>
         </div>
       </section>
       <section class="llm-section results-llm">
@@ -140,6 +138,18 @@
           <p>Similarity means similarity of virtue-profile shape on this questionnaire, not identical beliefs or values.</p>
         </div>
         <div class="llm-grid" id="resultsLlmGrid"></div>
+      </section>
+      <section class="panel temple-card best-fit-panel" id="bestFitPanel">
+        <div class="section-title center compact-title">
+          <p class="eyebrow">Best fitting model</p>
+          <h2>Your closest LLM overlay</h2>
+          <p id="bestFitText">Submit at least one ranking to compare your profile with the closest model.</p>
+        </div>
+        <div class="best-fit-wrap">
+          <div class="best-fit-legend" id="bestFitLegend"></div>
+          <canvas id="bestFitRadar" width="780" height="540" aria-label="Overlay comparison between the user and the closest LLM"></canvas>
+          <div class="chart-caption">Overlay display range 40–100</div>
+        </div>
       </section>
     </section>
   </main>

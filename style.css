@@ -54,3 +54,66 @@ code{background:rgba(18,24,47,.06);border-radius:6px;padding:1px 5px}.muted{colo
 .source-image-card figcaption{font-size:.84rem;color:var(--muted);line-height:1.45;margin:10px 2px 2px}
 @media(max-width:980px){.source-panel{grid-template-columns:1fr}.source-images{grid-template-columns:1fr 1fr}}
 @media(max-width:640px){.source-images{grid-template-columns:1fr}}
+
+/* --- website refinement patch --- */
+.classical-grid{grid-template-columns:1.3fr .85fr !important;}
+.llm-card canvas,.result-chart-card canvas,.virtue-pentagon-wrap canvas,.best-fit-wrap canvas{display:block;width:100%;height:auto;}
+.llm-card{padding:18px 18px 20px}
+.llm-card h3{align-items:flex-start;font-size:1.15rem;line-height:1.1}
+.llm-card h3 span{white-space:nowrap}
+.llm-card p{min-height:2.6em}
+.best-fit-panel{max-width:1200px;margin:0 auto 80px;padding-top:28px}
+.compact-title{margin-bottom:12px !important}
+.best-fit-wrap{display:grid;grid-template-columns:260px 1fr;gap:20px;align-items:center}
+.best-fit-legend{display:grid;gap:12px;align-content:start}
+.legend-chip{display:flex;align-items:center;gap:10px;padding:12px 14px;background:rgba(18,24,47,.05);border-radius:18px;font-weight:800;color:#33405c}
+.legend-swatch{width:16px;height:16px;border-radius:50%}
+.legend-caption{font-size:.92rem;line-height:1.45;color:var(--muted);font-weight:600}
+.legend-score{font-size:.84rem;color:#0f766e;font-weight:900}
+#bestFitText{max-width:780px;margin:0 auto}
+@media(max-width:980px){.best-fit-wrap{grid-template-columns:1fr}.classical-grid{grid-template-columns:1fr 1fr !important}}
+@media(max-width:640px){.best-fit-panel{padding:24px 16px 36px}.classical-grid{grid-template-columns:1fr !important}}
+/* Prevent decorative meander from colliding with captions/charts inside compact cards. */
+.classical-card.temple-card::before,
+.classical-card.temple-card::after,
+.llm-card.temple-card::after,
+.result-chart-card.temple-card::before,
+.result-chart-card.temple-card::after {
+  display:none !important;
+}
+.classical-card{padding-bottom:16px !important;}
+.classical-card figcaption{position:relative;z-index:2;background:rgba(255,255,255,.82);border-radius:0 0 18px 18px;}
+
+/* --- overlap correction patch v2 --- */
+.chart-caption{margin-top:4px;text-align:center;color:#697386;font-weight:800;font-size:.74rem;line-height:1.25}
+.virtue-pentagon-wrap .chart-caption{margin-top:-8px}
+.llm-card.temple-card:after,.classical-card.temple-card:before,.classical-card.temple-card:after{display:none!important}
+.llm-card canvas{padding:0 8px;}
+.result-chart-card{overflow:visible;}
+.virtue-pentagon-wrap{overflow:visible;}
+.classical-card{padding-bottom:12px;}
+.classical-card figcaption{position:relative;z-index:2;background:rgba(255,255,255,.78);border-radius:14px;margin:10px 10px 0;padding:10px 12px!important;color:#596376!important;line-height:1.45!important}
+.classical-card img{border-radius:22px;}
+.classical-card.large img{height:auto;}
+.results-banner-art{overflow:hidden;}
+.results-banner-art img{display:block;}
+@media(max-width:980px){.llm-card canvas{padding:0 4px}}
+
+/* v3 meander restoration without overlap */
+.temple-card::before,.temple-card::after{z-index:0;opacity:.34}
+.temple-card > *{position:relative;z-index:1}
+.hero-art,.results-banner,.results-hero,.best-fit-panel,.dilemma-card,.llm-card,.classical-card{overflow:hidden}
+.llm-card.temple-card::before,.llm-card.temple-card::after,.classical-card.temple-card::before,.classical-card.temple-card::after{display:block!important}
+.llm-card{padding-top:24px!important;padding-bottom:28px!important}
+.llm-card canvas{padding:6px 10px 12px!important}
+.classical-card{padding-top:24px!important;padding-bottom:22px!important}
+.classical-card figcaption{margin:12px 10px 0;padding:10px 12px!important;background:rgba(255,255,255,.90)!important;border-radius:16px;box-shadow:0 6px 18px rgba(18,24,47,.06)}
+.result-chart-card,.best-fit-panel,.results-banner,.hero-art,.dilemma-card{padding-top:26px}
+.virtue-pentagon-wrap{padding-top:14px}
+.best-fit-panel canvas{padding:8px 6px 10px}
+/* ensure decorative lines stay out of text-heavy compact areas */
+.llm-card.temple-card::before{top:10px}
+.llm-card.temple-card::after{bottom:10px}
+.classical-card.temple-card::before{top:10px}
+.classical-card.temple-card::after{bottom:10px}
+@media(max-width:980px){.llm-card canvas{padding:8px 6px 12px!important}}

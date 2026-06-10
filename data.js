@@ -389,18 +389,30 @@ const DEMO_LLM_PROFILES = [
     "id": "gpt",
     "name": "GPT",
     "family": "openai",
-    "consistency": 92,
+    "consistency": 91,
     "source": "measured-openrouter",
-    "profile": { "wisdom": 91.67, "justice": 78.81, "truthfulness": 81.19, "courage": 74.76, "temperance": 81.67 },
-    "note": "Measured over 3 valid questionnaire runs."
+    "profile": {
+      "wisdom": 92.29,
+      "justice": 83.0,
+      "truthfulness": 81.14,
+      "courage": 76.29,
+      "temperance": 82.29
+    },
+    "note": "Measured over 5 valid questionnaire runs."
   },
   {
     "id": "claude",
     "name": "Claude",
     "family": "anthropic",
-    "consistency": 95,
+    "consistency": 96,
     "source": "measured-openrouter",
-    "profile": { "wisdom": 87.62, "justice": 83.57, "truthfulness": 87.62, "courage": 84.76, "temperance": 71.43 },
+    "profile": {
+      "wisdom": 89.29,
+      "justice": 83.1,
+      "truthfulness": 85.95,
+      "courage": 83.1,
+      "temperance": 72.62
+    },
     "note": "Measured over 3 valid questionnaire runs."
   },
   {
@@ -409,61 +421,103 @@ const DEMO_LLM_PROFILES = [
     "family": "google",
     "consistency": 94,
     "source": "measured-openrouter",
-    "profile": { "wisdom": 90.48, "justice": 78.57, "truthfulness": 83.57, "courage": 78.10, "temperance": 76.19 },
-    "note": "Measured over 3 valid questionnaire runs."
+    "profile": {
+      "wisdom": 90.57,
+      "justice": 78.86,
+      "truthfulness": 82.86,
+      "courage": 77.29,
+      "temperance": 77.71
+    },
+    "note": "Measured over 5 valid questionnaire runs."
   },
   {
     "id": "llama",
     "name": "Llama",
     "family": "meta-llama",
-    "consistency": 90,
+    "consistency": 87,
     "source": "measured-openrouter",
-    "profile": { "wisdom": 84.29, "justice": 82.86, "truthfulness": 87.86, "courage": 85.95, "temperance": 66.90 },
-    "note": "Measured over 3 valid questionnaire runs."
+    "profile": {
+      "wisdom": 87.38,
+      "justice": 80.36,
+      "truthfulness": 83.1,
+      "courage": 80.71,
+      "temperance": 72.74
+    },
+    "note": "Measured over 6 valid questionnaire runs."
   },
   {
     "id": "deepseek",
     "name": "DeepSeek",
     "family": "deepseek",
-    "consistency": 93,
+    "consistency": 87,
     "source": "measured-openrouter",
-    "profile": { "wisdom": 90.95, "justice": 79.52, "truthfulness": 80.24, "courage": 76.19, "temperance": 76.67 },
-    "note": "Measured over 3 valid questionnaire runs."
+    "profile": {
+      "wisdom": 89.82,
+      "justice": 74.11,
+      "truthfulness": 78.75,
+      "courage": 72.14,
+      "temperance": 77.86
+    },
+    "note": "Measured over 4 valid questionnaire runs."
   },
   {
     "id": "mistral",
     "name": "Mistral",
     "family": "mistralai",
-    "consistency": 85,
+    "consistency": 86,
     "source": "measured-openrouter",
-    "profile": { "wisdom": 88.81, "justice": 76.19, "truthfulness": 81.90, "courage": 75.48, "temperance": 75.24 },
-    "note": "Measured over 3 valid questionnaire runs."
+    "profile": {
+      "wisdom": 91.19,
+      "justice": 79.05,
+      "truthfulness": 80.83,
+      "courage": 75.6,
+      "temperance": 78.21
+    },
+    "note": "Measured over 6 valid questionnaire runs."
   },
   {
     "id": "minimax",
     "name": "MiniMax",
     "family": "minimax",
-    "consistency": 90,
+    "consistency": 86,
     "source": "measured-openrouter",
-    "profile": { "wisdom": 86.43, "justice": 77.62, "truthfulness": 82.14, "courage": 77.14, "temperance": 76.19 },
-    "note": "Measured over 3 valid questionnaire runs."
+    "profile": {
+      "wisdom": 87.86,
+      "justice": 83.81,
+      "truthfulness": 85.36,
+      "courage": 82.98,
+      "temperance": 72.02
+    },
+    "note": "Measured over 6 valid questionnaire runs."
   },
   {
     "id": "grok",
     "name": "Grok",
     "family": "x-ai",
-    "consistency": 93,
+    "consistency": 94,
     "source": "measured-openrouter",
-    "profile": { "wisdom": 90.24, "justice": 82.38, "truthfulness": 82.14, "courage": 79.52, "temperance": 78.33 },
-    "note": "Measured over 3 valid questionnaire runs."
+    "profile": {
+      "wisdom": 91.79,
+      "justice": 78.93,
+      "truthfulness": 81.43,
+      "courage": 76.79,
+      "temperance": 78.39
+    },
+    "note": "Measured over 4 valid questionnaire runs."
   },
   {
     "id": "qwen",
     "name": "Qwen",
     "family": "qwen",
-    "consistency": 94,
+    "consistency": 91,
     "source": "measured-openrouter",
-    "profile": { "wisdom": 93.10, "justice": 84.52, "truthfulness": 84.29, "courage": 79.52, "temperance": 77.86 },
-    "note": "Measured over 3 valid questionnaire runs."
+    "profile": {
+      "wisdom": 93.43,
+      "justice": 82.86,
+      "truthfulness": 81.29,
+      "courage": 76.86,
+      "temperance": 80.43
+    },
+    "note": "Measured over 5 valid questionnaire runs."
   }
 ];

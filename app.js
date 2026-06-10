@@ -188,18 +188,22 @@
 
   function renderResults() {
     const profile = computeProfile();
-    drawRadar(byId('userRadar'), profile.scores, 'Your VirtueMap', profile.answeredCount ? '' : 'No submitted rankings yet');
+    drawRadar(byId('userRadar'), profile.scores);
     const valid = virtues.map(v => ({...v, value: profile.scores[v.id]})).filter(v => v.value != null).sort((a,b) => b.value - a.value);
     if (!profile.answeredCount) {
       byId('resultTitle').textContent = 'Your VirtueMap';
       byId('resultSummary').textContent = 'Submit at least one dilemma to generate a profile. You can answer only a subset for a fast demo.';
       byId('closestModels').innerHTML = '<p class="muted">No submitted rankings yet.</p>';
+      byId('bestFitText').textContent = 'Submit at least one ranking to compare your profile with the closest model.';
+      byId('bestFitLegend').innerHTML = '';
+      drawOverlayRadar(byId('bestFitRadar'), null, null);
     } else {
       const top = valid[0], second = valid[1];
       const arch = archetypeFor(top.id, second.id);
       byId('resultTitle').textContent = arch.title;
       byId('resultSummary').innerHTML = `${arch.text}<br><br><b>Strongest dimensions:</b> ${top.name} (${Math.round(top.value)}) and ${second.name} (${Math.round(second.value)}). <b>Profile confidence:</b> ${confidenceLabel(profile.answeredCount)} (${profile.answeredCount}/7 dilemmas submitted).`;
       renderClosest(profile);
+      renderBestFit(profile);
     }
     renderLlmGrid('resultsLlmGrid');
   }
@@ -215,6 +219,22 @@
     `).join('');
   }
 
+  function renderBestFit(profile) {
+    const ranked = models.map(m => ({ model:m, sim:centeredCosinePercent(profile.scores, m.profile) })).sort((a,b) => b.sim - a.sim);
+    const best = ranked[0];
+    if (!best) {
+      byId('bestFitText').textContent = 'No model comparison available yet.';
+      byId('bestFitLegend').innerHTML = '';
+      drawOverlayRadar(byId('bestFitRadar'), null, null);
+      return;
+    }
+    byId('bestFitText').innerHTML = `Your closest model profile is <b>${escapeHtml(best.model.name)}</b> with <b>${best.sim}% similarity</b>. The overlay below compares your virtue pentagon with the best-fitting LLM profile.`;
+    byId('bestFitLegend').innerHTML = `
+      <div class="legend-chip"><span class="legend-swatch" style="background:#243b78"></span><div><div>You</div><div class="legend-caption">Computed from your submitted dilemma rankings.</div></div></div>
+      <div class="legend-chip"><span class="legend-swatch" style="background:#c59a45"></span><div><div>${escapeHtml(best.model.name)}</div><div class="legend-caption">${escapeHtml(best.model.family)} · ${escapeHtml(best.model.note)}</div><div class="legend-score">Similarity ${best.sim}% · Stability ${best.model.consistency}%</div></div></div>`;
+    drawOverlayRadar(byId('bestFitRadar'), profile.scores, best.model);
+  }
+
   function renderLlmGrid(containerId) {
     const container = byId(containerId);
     if (!container) return;
@@ -225,63 +245,182 @@
       card.innerHTML = `
         <h3>${escapeHtml(m.name)} <span>${m.consistency}% stable</span></h3>
         <p>${escapeHtml(m.family)} · ${escapeHtml(m.note)}</p>
-        <canvas width="360" height="300" aria-label="${escapeHtml(m.name)} radar chart"></canvas>
+        <canvas width="440" height="360" aria-label="${escapeHtml(m.name)} pentagon chart"></canvas>
+        <div class="chart-caption">Display range 40–100 · full scores remain 0–100</div>
       `;
       container.appendChild(card);
-      drawRadar(card.querySelector('canvas'), m.profile, m.name, '');
+      drawRadar(card.querySelector('canvas'), m.profile);
     });
   }
 
   function drawPentagon() {
     const canvas = byId('virtuePentagon');
     const scores = Object.fromEntries(virtues.map(v => [v.id, 72]));
-    drawRadar(canvas, scores, 'The virtue pentagon', 'Five axes, one profile');
+    drawRadar(canvas, scores);
   }
 
-  function drawRadar(canvas, scores, title, subtitle) {
+  function axisLabel(v) {
+    const labels = {
+      wisdom: 'Practical Wisdom',
+      justice: 'Justice',
+      truthfulness: 'Truth',
+      courage: 'Courage',
+      temperance: 'Temperance'
+    };
+    return labels[v.id] || v.name;
+  }
+
+  function drawAxisLabel(ctx, text, x, y, align, maxWidth, lineHeight) {
+    const words = text.split(' ');
+    let line = '', lines = [];
+    words.forEach(word => {
+      const test = line ? line + ' ' + word : word;
+      if (ctx.measureText(test).width > maxWidth && line) { lines.push(line); line = word; }
+      else line = test;
+    });
+    lines.push(line);
+    const startY = y - (lines.length - 1) * lineHeight / 2;
+    ctx.textAlign = align;
+    lines.forEach((l,i) => ctx.fillText(l, x, startY + i * lineHeight));
+  }
+
+  function safeLabelPosition(ctx, text, lx, ly, align, w, h, maxWidth) {
+    const words = text.split(' ');
+    let line = '', lines = [];
+    words.forEach(word => {
+      const test = line ? line + ' ' + word : word;
+      if (ctx.measureText(test).width > maxWidth && line) { lines.push(line); line = word; }
+      else line = test;
+    });
+    lines.push(line);
+    const width = Math.max(...lines.map(l => ctx.measureText(l).width));
+    if (align === 'right') lx = Math.max(lx, width + 10);
+    if (align === 'left') lx = Math.min(lx, w - width - 10);
+    if (align === 'center') lx = Math.max(width/2 + 8, Math.min(w - width/2 - 8, lx));
+    ly = Math.max(18, Math.min(h - 18, ly));
+    return [lx, ly];
+  }
+
+  function drawRadar(canvas, scores) {
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     const w = canvas.width, h = canvas.height;
     ctx.clearRect(0,0,w,h);
-    const cx = w/2, cy = h/2 + 12, radius = Math.min(w,h) * 0.32;
+
     const n = virtues.length;
-    const scaleMin = 50; // scores remain 0-100; display is zoomed to 50-100 for legibility
-    const scaleMax = 100;
+    const scaleMin = 40, scaleMax = 100;
     const toDisplayRadius = (value) => clamp((value - scaleMin) / (scaleMax - scaleMin), 0, 1);
+    const topPad = 44, bottomPad = 44, sidePad = 92;
+    const radius = Math.max(38, Math.min((w - sidePad*2)/2, (h - topPad - bottomPad)/2));
+    const cx = w / 2;
+    const cy = topPad + radius;
+
     ctx.save();
-    ctx.fillStyle = '#fffaf2'; ctx.fillRect(0,0,w,h);
-    ctx.strokeStyle = 'rgba(185,139,52,.25)'; ctx.lineWidth = 2;
-    for (let ring=1; ring<=4; ring++) drawPoly(ctx, cx, cy, radius*ring/4, n, -Math.PI/2, false);
-    // scale labels for the zoomed pentagon
-    ctx.fillStyle = 'rgba(20,27,51,.48)';
-    ctx.font = '700 10px Inter, Arial';
-    ctx.textAlign = 'center';
-    ctx.fillText('50', cx, cy + 4);
-    ctx.fillText('75', cx, cy - radius*0.5 + 4);
-    ctx.fillText('100', cx, cy - radius + 4);
+    ctx.lineJoin = 'round';
+    // Grid rings.
+    for (let ring=1; ring<=4; ring++) {
+      ctx.strokeStyle = ring === 4 ? 'rgba(197,154,69,.36)' : 'rgba(197,154,69,.20)';
+      ctx.lineWidth = ring === 4 ? 1.8 : 1.2;
+      drawPoly(ctx, cx, cy, radius*ring/4, n, -Math.PI/2);
+    }
+    // Axes.
     virtues.forEach((v,i) => {
       const a = -Math.PI/2 + i*2*Math.PI/n;
-      ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(cx+Math.cos(a)*radius, cy+Math.sin(a)*radius); ctx.strokeStyle='rgba(18,24,47,.12)'; ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + Math.cos(a)*radius, cy + Math.sin(a)*radius);
+      ctx.strokeStyle = 'rgba(18,24,47,.12)'; ctx.lineWidth = 1.2; ctx.stroke();
     });
+    // Subtle ring labels on right side only, not on the top axis.
+    ctx.fillStyle = 'rgba(20,27,51,.48)';
+    ctx.font = '800 10px Inter, Arial';
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'middle';
+    [[40,0],[70,.5],[100,1]].forEach(([label,frac]) => {
+      const x = cx + radius*frac + 6;
+      const y = cy;
+      if (x < w - 26) ctx.fillText(String(label), x, y);
+    });
+
+    // Profile polygon.
     const points = virtues.map((v,i) => {
       const val = scores && scores[v.id] != null ? scores[v.id] : scaleMin;
       const a = -Math.PI/2 + i*2*Math.PI/n;
       const r = radius * toDisplayRadius(val);
-      return [cx+Math.cos(a)*r, cy+Math.sin(a)*r, val, v, a];
+      return [cx + Math.cos(a)*r, cy + Math.sin(a)*r, val, v, a];
     });
     const grad = ctx.createRadialGradient(cx,cy,0,cx,cy,radius);
-    grad.addColorStop(0,'rgba(69,111,232,.25)'); grad.addColorStop(.65,'rgba(25,154,143,.22)'); grad.addColorStop(1,'rgba(197,154,69,.34)');
-    ctx.beginPath(); points.forEach((p,i)=> i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1])); ctx.closePath(); ctx.fillStyle=grad; ctx.fill(); ctx.strokeStyle='#28396e'; ctx.lineWidth=3; ctx.stroke();
-    points.forEach(([x,y,val,v])=>{ctx.beginPath();ctx.arc(x,y,4.5,0,2*Math.PI);ctx.fillStyle=colors[v.id]||'#333';ctx.fill();});
-    virtues.forEach((v,i)=>{
-      const a=-Math.PI/2+i*2*Math.PI/n;
-      const lx=cx+Math.cos(a)*(radius+48), ly=cy+Math.sin(a)*(radius+42);
-      ctx.fillStyle='#141b33'; ctx.font='700 13px Inter, Arial'; ctx.textAlign= lx<cx-10 ? 'right' : lx>cx+10 ? 'left' : 'center'; ctx.textBaseline='middle';
-      wrapText(ctx, v.name, lx, ly, 96, 15);
+    grad.addColorStop(0,'rgba(69,111,232,.18)');
+    grad.addColorStop(.65,'rgba(25,154,143,.18)');
+    grad.addColorStop(1,'rgba(197,154,69,.24)');
+    ctx.beginPath(); points.forEach((p,i)=> i ? ctx.lineTo(p[0],p[1]) : ctx.moveTo(p[0],p[1])); ctx.closePath();
+    ctx.fillStyle = grad; ctx.fill();
+    ctx.strokeStyle = '#263b78'; ctx.lineWidth = 3; ctx.stroke();
+    points.forEach(([x,y,val,v]) => { ctx.beginPath(); ctx.arc(x,y,4.8,0,2*Math.PI); ctx.fillStyle = colors[v.id] || '#333'; ctx.fill(); });
+
+    // Axis labels: short, bold, and forced inside canvas.
+    ctx.font = '900 11px Inter, Arial';
+    ctx.fillStyle = '#17213d';
+    ctx.textBaseline = 'middle';
+    virtues.forEach((v,i) => {
+      const a = -Math.PI/2 + i*2*Math.PI/n;
+      let lx = cx + Math.cos(a)*(radius + 34);
+      let ly = cy + Math.sin(a)*(radius + 28);
+      let align = lx < cx - 8 ? 'right' : lx > cx + 8 ? 'left' : 'center';
+      const label = axisLabel(v);
+      const labelWidth = v.id === 'wisdom' ? 66 : (v.id === 'temperance' ? 78 : 72);
+      if (v.id === 'wisdom') ly += 6;
+      [lx, ly] = safeLabelPosition(ctx, label, lx, ly, align, w, h, labelWidth);
+      drawAxisLabel(ctx, label, lx, ly, align, labelWidth, 12);
     });
-    ctx.fillStyle='#141b33'; ctx.font='800 20px Georgia, serif'; ctx.textAlign='center'; ctx.fillText(title, cx, 28);
-    const scaleNote = subtitle ? `${subtitle} · display range 50-100` : 'display range 50-100';
-    ctx.fillStyle='#6b7280'; ctx.font='700 12px Inter, Arial'; ctx.fillText(scaleNote, cx, 48);
+    ctx.restore();
+  }
+
+  function drawOverlayRadar(canvas, userScores, bestModel) {
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const w = canvas.width, h = canvas.height;
+    ctx.clearRect(0,0,w,h);
+    const n = virtues.length;
+    const scaleMin = 40, scaleMax = 100;
+    const toDisplayRadius = (value) => clamp((value - scaleMin) / (scaleMax - scaleMin), 0, 1);
+    const topPad = 46, bottomPad = 42, sidePad = 112;
+    const radius = Math.max(55, Math.min((w - sidePad*2)/2, (h - topPad - bottomPad)/2));
+    const cx = w / 2, cy = topPad + radius;
+
+    ctx.save();
+    for (let ring=1; ring<=4; ring++) {
+      ctx.strokeStyle = ring === 4 ? 'rgba(197,154,69,.36)' : 'rgba(197,154,69,.20)';
+      ctx.lineWidth = ring === 4 ? 1.8 : 1.2;
+      drawPoly(ctx, cx, cy, radius*ring/4, n, -Math.PI/2);
+    }
+    virtues.forEach((v,i) => {
+      const a = -Math.PI/2 + i*2*Math.PI/n;
+      ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(cx+Math.cos(a)*radius, cy+Math.sin(a)*radius);
+      ctx.strokeStyle='rgba(18,24,47,.12)'; ctx.lineWidth=1.2; ctx.stroke();
+    });
+    ctx.fillStyle = 'rgba(20,27,51,.48)'; ctx.font = '800 10px Inter, Arial'; ctx.textAlign='left'; ctx.textBaseline='middle';
+    [[40,0],[70,.5],[100,1]].forEach(([label,frac])=>{ const x=cx+radius*frac+6; if(x<w-30) ctx.fillText(String(label), x, cy); });
+
+    function plotProfile(profile, stroke, fill, point) {
+      if (!profile) return;
+      const pts = virtues.map((v,i)=>{
+        const a=-Math.PI/2+i*2*Math.PI/n; const val = profile[v.id] ?? scaleMin; const r = radius*toDisplayRadius(val);
+        return [cx+Math.cos(a)*r, cy+Math.sin(a)*r, v];
+      });
+      ctx.beginPath(); pts.forEach((p,i)=> i ? ctx.lineTo(p[0],p[1]) : ctx.moveTo(p[0],p[1])); ctx.closePath();
+      ctx.fillStyle = fill; ctx.fill(); ctx.strokeStyle = stroke; ctx.lineWidth = 3; ctx.stroke();
+      pts.forEach(([x,y])=>{ctx.beginPath();ctx.arc(x,y,4.8,0,2*Math.PI);ctx.fillStyle=point;ctx.fill();});
+    }
+    plotProfile(bestModel ? bestModel.profile : null, '#bd8c28', 'rgba(197,154,69,.14)', '#c59a45');
+    plotProfile(userScores, '#263b78', 'rgba(69,111,232,.16)', '#456fe8');
+
+    ctx.font = '900 12px Inter, Arial'; ctx.fillStyle='#17213d'; ctx.textBaseline='middle';
+    virtues.forEach((v,i)=>{
+      const a=-Math.PI/2+i*2*Math.PI/n; let lx=cx+Math.cos(a)*(radius+38), ly=cy+Math.sin(a)*(radius+30);
+      let align=lx<cx-8?'right':lx>cx+8?'left':'center'; const label=axisLabel(v);
+      const labelWidth = v.id === 'wisdom' ? 74 : (v.id === 'temperance' ? 88 : 82);
+      if (v.id === 'wisdom') ly += 6;
+      [lx,ly]=safeLabelPosition(ctx,label,lx,ly,align,w,h,labelWidth); drawAxisLabel(ctx,label,lx,ly,align,labelWidth,12);
+    });
     ctx.restore();
   }
 
